@@ -1,0 +1,52 @@
+  
+  .navbar { 
+    display: flex;
+    min-width: 100%;
+    justify-content: space-between;  /* Aligns items to edges */
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.042); 
+    background-color: white;
+    color: black;
+    padding-top: 1.5rem;
+    position: fixed;
+    z-index: 100;
+  }
+  .navbar-menu-button{
+    
+        color:blue;
+    }
+  
+  /* Styling the Links */
+  .navbar-items{
+    color: black;
+    display: flex;
+    justify-content: flex-end;
+    margin: 3px;
+  }
+  .navbar-link{
+    color: black;
+    margin: 10px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.104);
+  }
+  .navbar-link:hover, 
+  .navbar-link:focus {
+    background-color:black;
+    color: white;
+  }
+  /* Styling the Tooltip */ 
+  .ant-tooltip {
+      background-color: #fff;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive Adjustments (for smaller screens) */
+  @media (max-width: 900px) {
+    .header__nav {
+      flex-direction: column; /* Stack items on smaller screens */
+      align-items: flex-start;
+      gap: 10px;  
+    }
+  }
+  

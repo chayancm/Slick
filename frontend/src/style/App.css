@@ -1,0 +1,77 @@
+
+
+
+
+body {
+	line-height: 1;
+    min-width: 100%;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+      
+}
+#root{
+  min-width: 100%;
+    min-height: 100%;
+}
+
+
+main, .light, .dark{
+  min-width: 100%;
+  min-height: 100%;
+  position: relative;
+  display: flex;
+}
+.app-container { 
+  display: flex;
+  position: relative;
+  min-width: 100%;
+    min-height: 100%;
+  background-color: white;
+  color:black;
+  max-width: 100vw;
+}
+
+/* Assuming you have colors defined elsewhere */
+.dark-mode .app-container { 
+  background-color: black ;
+}
+
+.app-container--light { /* For standard background */
+  background-color: white;
+} 
+.settings-button { 
+  position: fixed;
+  right: 16px; /* Equivalent of right-4 */
+  bottom: 16px; 
+  z-index: 10000;
+  background-color: var(--current-color); /* Assuming you have this defined */
+  border-radius: 50%;
+  /* ... other button styles  */
+}
+
+.settings-button:hover {
+  background-color: #e0e0e0; /* Equivalent of light-gray */
+  box-shadow: 60px -16px teal; /* add your drop shadow styles here */
+}
+.active-bar{
+  width: 100%; 
+min-height: 100vh; 
+
+}
+@media (min-width: 768px) { 
+  .active-bar{
+  margin-left: 18rem; 
+  }
+ }
+.bar{
+  width: auto; 
+  height: 100%;
+}
+.Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  z-index: 10000000;
+}
