@@ -28,6 +28,7 @@ model category {
   metaSchema           String
   metaDescription      String
   store                store[]
+  coupon               coupon[]
 
   @@index([categoryName])
 }
@@ -47,6 +48,7 @@ model user {
   token      String?
   roles      roles[]
   store      store[]
+  coupons    coupon[]
 }
 
 model roles {
@@ -93,6 +95,32 @@ model store {
   metaSchema           String
   metaDescription      String
   categories           category[]
+  coupon               coupon[]
 
   @@index([storeName])
+}
+
+model coupon {
+  couponId           String       @id @default(uuid())
+  type               String
+  publisherName      user         @relation(fields: [publisherId], references: [id])
+  publisherId        String
+  cashbackType       String
+  minOff             Int
+  startDate          DateTime
+  expirationTime     DateTime
+  couponCode         String
+  imageUrl           String
+  MerchantLink       String
+  affiliateUrl       String
+  termsAndConditions String
+  CouponPanchLine    String
+  status             activestatus
+  topOffer           activestatus
+  hotOfTheDay        activestatus
+  showWithCategory   activestatus
+  description        String
+  category           category[]
+  store              store        @relation(fields: [storeid], references: [storeid])
+  storeid            String
 }
