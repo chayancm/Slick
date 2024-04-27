@@ -51,45 +51,50 @@ const addStore = async (req, res) => {
   const data = req.body;
 
   try {
-    const store = await prisma.store.create({
-      data: {
-        storeName: data.storeName,
-        merchantId: data.merchantId,
-        storeAlternateName: data.storeAlternateName,
-        storeUrl: data.storeUrl,
-        storeLogo: data.storeLogo,
-        TrackingLink: data.TrackingLink,
-        storeDomainName: data.storeDomainName,
-        utmParameter: data.utmParameter,
-        status:
-          data.status === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        displayOnMenu:
-          data.displayOnMenu === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        displayOnNotificaton:
-          data.displayOnNotificaton === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        topStore:
-          data.topStore === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        topStoreInFooter:
-          data.topStoreInFooter === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        storeDescription: data.storeDescription,
-        metaTitle: data.metaTitle,
-        metaKeyword: data.metaKeyword,
-        metaCanonical: data.metaCanonical,
-        metaSchema: data.metaSchema,
-        metaDescription: data.metaDescription,
-        merchant: { connect: { id: req.user.id } },
-      },
-    });
+    const trx = await prisma.$transaction(
+      await prisma.store.create({
+        data: {
+          storeName: data.storeName,
+          merchant: { connect: { merchantId: id } },
+          storeAlternateName: data.storeAlternateName,
+          storeUrl: data.storeUrl,
+          storeLogo: data.storeLogo,
+          TrackingLink: data.TrackingLink,
+          storeDomainName: data.storeDomainName,
+          utmParameter: data.utmParameter,
+          status:
+            data.status === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          displayOnMenu:
+            data.displayOnMenu === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          displayOnNotificaton:
+            data.displayOnNotificaton === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          topStore:
+            data.topStore === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          topStoreInFooter:
+            data.topStoreInFooter === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          storeDescription: data.storeDescription,
+          metaTitle: data.metaTitle,
+          metaKeyword: data.metaKeyword,
+          metaCanonical: data.metaCanonical,
+          metaSchema: data.metaSchema,
+          metaDescription: data.metaDescription,
+          merchant: { connect: { id: req.user.id } },
+          categories: {
+            connect: data.categories.map((categoryId) => ({ id: categoryId })),
+          },
+        },
+      })
+    );
 
     return res.status(ok).json({ store });
   } catch (error) {
@@ -107,6 +112,7 @@ const updateStore = async (req, res) => {
   const { id } = req.params;
   console.log(id);
   const data = req.body;
+  id = req.user.id;
   console.log(data);
 
   try {
@@ -128,7 +134,6 @@ const updateStore = async (req, res) => {
       },
       data: {
         storeName: data.storeName,
-        merchantId: data.merchantId,
         storeAlternateName: data.storeAlternateName,
         storeUrl: data.storeUrl,
         storeLogo: data.storeLogo,
@@ -161,6 +166,9 @@ const updateStore = async (req, res) => {
         metaCanonical: data.metaCanonical,
         metaSchema: data.metaSchema,
         metaDescription: data.metaDescription,
+        categories: {
+          connect: data.categories.map((categoryId) => ({ id: categoryId })),
+        },
       },
     });
 
