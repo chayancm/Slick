@@ -7,23 +7,24 @@ const addCoupons = async (req, res) => {
       await prisma.coupon.create({
         data: {
           type: data.type,
-          publisherId: data.publisherId, // Connect with the publisher (user)
+          publisherId: {
+            connect: {
+              id: data.publisherId,
+            },
+          },
           cashbackType: data.cashbackType,
           minOff: data.minOff,
           startDate: data.startDate,
           expirationTime: data.expirationTime,
           couponCode: data.couponCode,
-          // ... other fields from data
 
-          // Connect with store
           store: {
             connect: { storeid: data.storeid },
           },
 
-          // Connect with categories (assuming you have a junction table)
           categories: {
-            connect: data.category.map((categoryId) => ({
-              id: categoryId,
+            connect: data.category.map((category) => ({
+              categoryId: category,
             })),
           },
         },
