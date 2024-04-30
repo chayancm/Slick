@@ -11,3 +11,5 @@ export {default as Login} from './Login'
 export {default as DashBoard} from './DashBoard';
 export {default as Register} from './Register';
 export {default as LogOut} from './LogOut';
+export {default as Add_Coupon} from './Add_Coupon'
+export {default as Add_Store} from './Add_Store'

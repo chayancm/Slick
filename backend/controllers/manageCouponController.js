@@ -2,6 +2,7 @@ const { PrismaClient, activestatus } = require("@prisma/client");
 const prisma = new PrismaClient();
 const addCoupons = async (req, res) => {
   const { data } = req.body;
+  userId = req.user.id;
   try {
     const trx = await prisma.$transaction(
       await prisma.coupon.create({
@@ -9,7 +10,7 @@ const addCoupons = async (req, res) => {
           type: data.type,
           publisherId: {
             connect: {
-              id: data.publisherId,
+              id: userId,
             },
           },
           cashbackType: data.cashbackType,
@@ -17,7 +18,28 @@ const addCoupons = async (req, res) => {
           startDate: data.startDate,
           expirationTime: data.expirationTime,
           couponCode: data.couponCode,
+          MerchantLink: data.MerchantLink,
+          affiliateUrl: data.affiliateUrl,
+          termsAndConditions: data.termsAndConditions,
+          CouponPanchLine: data.CouponPanchLine,
+          status:
+            data.status === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          topOffer:
+            data.topOffer === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          hotOfTheDay:
+            data.hotOfTheDay === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
+          showWithCategory:
+            data.showWithCategory === "ACTIVE"
+              ? activestatus.ACTIVE
+              : activestatus.INACTIVE,
 
+          description: data.description,
           store: {
             connect: { storeid: data.storeid },
           },

@@ -4,7 +4,7 @@ import {BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { Tooltip } from 'antd';
 import {NavBar, Footer,SideBar,ThemeSettings,Header} from './components'
-import {Categories,Add_Admin, Edit_Admin,Add_Category,Edit_Category, ColorPicker, Ecommerce,Login,DashBoard,Register, LogOut} from './pages'
+import {Categories,Add_Admin, Edit_Admin,Add_Category,Edit_Category, ColorPicker, Ecommerce,Login,DashBoard,Register, LogOut,Add_Store,Add_Coupon} from './pages'
 import { useStateContext } from './contexts/ContextProvider';
 import axios from 'axios';
 import './style/App.css'
@@ -17,6 +17,9 @@ function App() {
         <Route path="/Login" element={<Login/>}/>
         <Route path="/LogOut" element={<LogOut/>}/>
         <Route path="/Register" element={<Register/>}/>
+        <Route path="/AddStore" element={<Add_Store/>}/>
+        <Route path="/AddCoupon" element={<Add_Coupon/>}/>
+
         <Route path="/*" element={
           <div className="app-container ">
                 <Tooltip title="Settings" placement="top">
@@ -35,7 +38,6 @@ function App() {
                       ? 'dark:bg-main-dark-bg bg-main-bg min-h-screen w-full'  
                       : 'dark:bg-main-dark-bg bg-main-bg w-full min-h-screen max-w-full'
                 }> 
-                    {/* Introduce a new wrapper */}
                     <div >  
                         <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar  w- max-w-full  ">
                             <NavBar />

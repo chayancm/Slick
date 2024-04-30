@@ -8,7 +8,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 import { Tooltip } from 'antd';
 import { UserProfile } from '.'; // Assuming UserProfile component exists
 import { Link, NavLink } from 'react-router-dom';
-import { DashBoard, Login, Register,LogOut } from '../pages' // Assuming pages exist 
+import { DashBoard, Login, Register,LogOut,Add_Coupon } from '../pages' // Assuming pages exist 
 import App from '../App';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useNavigate } from 'react-router-dom';
@@ -57,6 +57,9 @@ const Navbar = () => {
 
         {isLogedin && (
           <>
+          <NavLink to={'/Add_Coupon'} key={Add_Coupon} className="navbar-link">
+              Add Coupon
+            </NavLink>
           <NavLink to={'/DashBoard'} key={DashBoard} className="navbar-link">
             DashBoard
           </NavLink>
