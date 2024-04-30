@@ -1,5 +1,30 @@
 const { PrismaClient, activestatus } = require("@prisma/client");
 const prisma = new PrismaClient();
+
+const getStore = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).send("Bad Request: categoryName header is missing");
+  }
+
+  try {
+    const store = await prisma.store.findUnique({
+      where: {
+        storeid: id,
+      },
+    });
+
+    if (!store) {
+      return res.status(404).json({ message: "No store found with this name" });
+    }
+
+    return res.status(200).json({ category });
+  } catch (error) {
+    console.error("Error fetching category:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
+
 const addCoupons = async (req, res) => {
   const { data } = req.body;
   userId = req.user.id;
