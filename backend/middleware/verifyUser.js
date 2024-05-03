@@ -43,8 +43,9 @@ const verifyUser = async (req, res, next) => {
         }
 
         // Token is valid, proceed to next middleware
-        req.user.id = user.id;
-        req.user.roles = role;
+        req.id = user.id;
+        req.roles = role;
+        console.log(req.id);
         next();
       }
     );

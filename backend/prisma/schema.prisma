@@ -102,8 +102,10 @@ model store {
 
 model coupon {
   couponId           String       @id @default(uuid())
+  AggregatorType     String
   type               String
-  publisherName      user         @relation(fields: [publisherId], references: [id])
+  publisher          user         @relation(fields: [publisherId], references: [id])
+  publisherName      String
   publisherId        String
   cashbackType       String
   minOff             Int
@@ -114,7 +116,7 @@ model coupon {
   MerchantLink       String
   affiliateUrl       String
   termsAndConditions String
-  CouponPanchLine    String
+  CouponPunchLine    String
   status             activestatus
   topOffer           activestatus
   hotOfTheDay        activestatus

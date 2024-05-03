@@ -1,24 +1,25 @@
 const express = require("express");
 const router = express.Router();
-const { verifyEditor } = require("../middleware/verifyEditor");
 const {
   addStore,
   updateStore,
   getAllStore,
   getStore,
   deleteStore,
-} = require("../controllers/storeController");
+  getNameOfStore,
+} = require("../controllers/manageStoreController");
 const { verifyMerchant } = require("../middleware/verifyMerchant");
-const { authorizeStoreEdit } = require("../middleware/authorizeStore");
+const { authorizeStore } = require("../middleware/authorizeStore");
 
 router
   .route("/")
   .get(verifyMerchant, getAllStore)
   .post(verifyMerchant, addStore);
+router.route("/name").get(getNameOfStore);
 router
   .route("/:id")
   .get(verifyMerchant, getStore)
-  .patch([verifyMerchant, authorizeStoreEdit], updateStore)
-  .delete([verifyMerchant, authorizeStoreEdit], deleteStore);
+  .patch([verifyMerchant, authorizeStore], updateStore)
+  .delete([verifyMerchant, authorizeStore], deleteStore);
 
 module.exports = router;

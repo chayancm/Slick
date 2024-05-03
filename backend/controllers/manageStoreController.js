@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const getAllStore = async (req, res) => {
   try {
     let stores;
-    if (req.user.role.includes("ADMIN") || req.user.role.includes("EDITOR")) {
+    if (req.role.includes("ADMIN") || req.role.includes("EDITOR")) {
       // Fetch all stores
       stores = await prisma.store.findMany();
     } else {
@@ -47,56 +47,51 @@ const getStore = async (req, res) => {
 };
 
 const addStore = async (req, res) => {
-  console.log(req.body);
-  const data = req.body;
-
+  const { data } = req.body;
   try {
-    const trx = await prisma.$transaction(
-      await prisma.store.create({
-        data: {
-          storeName: data.storeName,
-          merchant: { connect: { merchantId: id } },
-          storeAlternateName: data.storeAlternateName,
-          storeUrl: data.storeUrl,
-          storeLogo: data.storeLogo,
-          TrackingLink: data.TrackingLink,
-          storeDomainName: data.storeDomainName,
-          utmParameter: data.utmParameter,
-          status:
-            data.status === "ACTIVE"
-              ? activestatus.ACTIVE
-              : activestatus.INACTIVE,
-          displayOnMenu:
-            data.displayOnMenu === "ACTIVE"
-              ? activestatus.ACTIVE
-              : activestatus.INACTIVE,
-          displayOnNotificaton:
-            data.displayOnNotificaton === "ACTIVE"
-              ? activestatus.ACTIVE
-              : activestatus.INACTIVE,
-          topStore:
-            data.topStore === "ACTIVE"
-              ? activestatus.ACTIVE
-              : activestatus.INACTIVE,
-          topStoreInFooter:
-            data.topStoreInFooter === "ACTIVE"
-              ? activestatus.ACTIVE
-              : activestatus.INACTIVE,
-          storeDescription: data.storeDescription,
-          metaTitle: data.metaTitle,
-          metaKeyword: data.metaKeyword,
-          metaCanonical: data.metaCanonical,
-          metaSchema: data.metaSchema,
-          metaDescription: data.metaDescription,
-          merchant: { connect: { id: req.user.id } },
-          categories: {
-            connect: data.categories.map((categoryId) => ({ id: categoryId })),
-          },
-        },
-      })
-    );
-
-    return res.status(ok).json({ store });
+    await prisma.store.create({
+      data: {
+        storeName: data.storeName,
+        storeAlternateName: data.storeAlternateName,
+        storeUrl: data.storeUrl,
+        storeLogo: data.storeLogo,
+        TrackingLink: data.TrackingLink,
+        storeDomainName: data.storeDomainName,
+        utmParameter: data.utmParameter,
+        status:
+          data.status === "ACTIVE"
+            ? activestatus.ACTIVE
+            : activestatus.INACTIVE,
+        displayOnMenu:
+          data.displayOnMenu === "ACTIVE"
+            ? activestatus.ACTIVE
+            : activestatus.INACTIVE,
+        displayOnNotificaton:
+          data.displayOnNotificaton === "ACTIVE"
+            ? activestatus.ACTIVE
+            : activestatus.INACTIVE,
+        topStore:
+          data.topStore === "ACTIVE"
+            ? activestatus.ACTIVE
+            : activestatus.INACTIVE,
+        topStoreInFooter:
+          data.topStoreInFooter === "ACTIVE"
+            ? activestatus.ACTIVE
+            : activestatus.INACTIVE,
+        storeDescription: data.storeDescription,
+        metaTitle: data.metaTitle,
+        metaKeyword: data.metaKeyword,
+        metaCanonical: data.metaCanonical,
+        metaSchema: data.metaSchema,
+        metaDescription: data.metaDescription,
+        merchant: { connect: { id: req.merchant } },
+        // categories: {
+        //   connect: data.categories.map((categoryId) => ({ id: categoryId })),
+        // },
+      },
+    });
+    console.log("here");
+    return res.status(200).json({ message: "Store Created" });
   } catch (error) {
     if (error.code === "P2002" && error.meta?.target?.includes("storeName")) {
       return res
@@ -233,6 +228,20 @@ const addCategorytoStore = async (req, res) => {
     throw error;
   }
 };
+const getNameOfStore = async (req, res) => {
+  let stores;
+  try {
+    stores = await prisma.store.findMany({
+      select: {
+        storeid: true,
+        storeName: true,
+      },
+    });
+    res.status(200).json(stores);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   addStore,
   updateStore,
@@ -240,4 +249,5 @@ module.exports = {
   getStore,
   deleteStore,
   addCategorytoStore,
+  getNameOfStore,
 };

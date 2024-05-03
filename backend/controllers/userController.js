@@ -1,4 +1,5 @@
 const { PrismaClient, activestatus } = require("@prisma/client");
+const { connect } = require("http2");
 const prisma = new PrismaClient();
 
 const getAllUser = async (req, res) => {
@@ -24,39 +25,49 @@ const getAllUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   try {
-    const { userId, roles, ...userData } = req.body;
+    console.log(req.body);
+    const { data } = req.body;
+    const userId = data.id;
+    let roles = data.roles;
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
       select: { roles: true },
     });
+    console.log(existingUser);
     const existingRoles = existingUser.roles;
-    const rolesToAdd = roles.filter(
-      (newRole) =>
-        !existingRoles.some(
-          (existingRole) => existingRole.roles === newRole.roles
-        )
-    );
-    const rolesToRemove = existingRoles.filter(
-      (existingRole) =>
-        !roles.some((newRole) => newRole.roles === existingRole.roles)
-    );
-
-    const newlyCreatedRoles = await prisma.roles.createMany({
-      data: rolesToAdd.map((role) => ({ roles: role.roles })),
-      skipDuplicates: true,
+    console.log("existingRoles", existingRoles);
+    const existingRole = existingRoles.map((userRole) => userRole.roles);
+    console.log(existingRole);
+    const rolesToAdd = roles.filter((role) => {
+      return !existingRole.includes(role);
     });
 
+    console.log({ "rolestoadd ": rolesToAdd });
+    const rolesToRemove = existingRoles.filter((existingRole) => {
+      return !roles.some((role) => role === existingRole.roles);
+    });
+    // const newlyCreatedRoles = await prisma.roles.createMany({
+    //   data: rolesToAdd.map((role) => ({
+    //     roles: role,
+    //     userId: userId,
+    //   })),
+    //   skipDuplicates: true,
+    // });
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        ...userData,
+        name: data.name,
+        email: email,
+        password: data.hashedPwd,
+        status: data.status,
         roles: {
-          connect: newlyCreatedRoles.map((role) => ({ id: role.id })),
-          disconnect: rolesToRemove.map((role) => ({ id: role.id })),
+          connectOrCreate: rolesToAdd.map((role) => ({
+            where: { roles: role },
+            create: { roles: role },
+          })),
         },
       },
     });
-
     console.log(user);
     res.json(user);
   } catch (error) {

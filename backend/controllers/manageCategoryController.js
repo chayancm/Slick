@@ -71,7 +71,7 @@ const addCategory = async (req, res) => {
         metaDescription: data.metaDescription,
       },
     });
-    return res.status(ok).json({ Category });
+    return res.status(200).json({ Category });
   } catch (error) {
     if (
       error.code === "P2002" &&
