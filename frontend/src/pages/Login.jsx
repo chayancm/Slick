@@ -48,8 +48,14 @@ const loginUser = async () => {
     const response = await axios.request(config);
     const role = response?.data?.role;
     console.log(role);
-    setAuth({ email, pwd, role});
-    localStorage.setItem('isLogedIn',true);
+    setAuth({ email, role});
+    const ttl = 30 * 60 * 1000;
+      const now = new Date();
+      const item = {
+        value: true,
+        expiry: now.getTime() + ttl, 
+      };
+      localStorage.setItem('isLogedIn', JSON.stringify(item));
         setEmail('');
         setPwd('');
         setIsLogedIn(true);
