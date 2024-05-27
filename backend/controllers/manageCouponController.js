@@ -44,9 +44,25 @@ const getCoupon = async (req, res) => {
 };
 
 const addCoupons = async (req, res) => {
-  const { data } = req.body;
-  userId = req.id;
+  const data = req.body;
+  const userId = req.id;
+
   try {
+    const store = await prisma.store.findUnique({
+      where: {
+        storeName: data.store,
+      },
+      select: {
+        storeid: true,
+      },
+    });
+
+    if (!store) {
+      return res.status(404).json({ error: "Store not found" });
+    }
+    const imageUrl = req.file ? req.file.path : "photo";
+    const category = JSON.parse(data.category);
+
     await prisma.coupon.create({
       data: {
         type: data.type,
@@ -57,40 +73,28 @@ const addCoupons = async (req, res) => {
           },
         },
         cashbackType: data.cashbackType,
-        minOff: data.minOff,
-        imageUrl: data.imageUrl,
-        startDate: data.startDate,
-        expirationTime: data.expirationTime,
+        AggregatorType: data.AggregatorType,
+        minOff: parseInt(data.minOff, 10),
+        imageUrl: imageUrl,
+        startDate: new Date(data.startDate),
+        expirationTime: new Date(data.expiryDate),
         couponCode: data.couponCode,
-        MerchantLink: data.MerchantLink,
+        MerchantLink: data.merchantLink,
         affiliateUrl: data.affiliateUrl,
         termsAndConditions: data.termsAndConditions,
-        CouponPunchLine: data.CouponPunchLine,
-        status:
-          data.status === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        topOffer:
-          data.topOffer === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-        hotOfTheDay:
-          data.hotOfTheDay === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
+        CouponPunchLine: data.couponPunchline,
+        status: data.status === "ACTIVE" ? "ACTIVE" : "INACTIVE",
+        topOffer: data.topOffer === "ACTIVE" ? "ACTIVE" : "INACTIVE",
+        hotOfTheDay: data.hotOfTheDay === "ACTIVE" ? "ACTIVE" : "INACTIVE",
         showWithCategory:
-          data.showWithCategory === "ACTIVE"
-            ? activestatus.ACTIVE
-            : activestatus.INACTIVE,
-
+          data.showWithCategory === "ACTIVE" ? "ACTIVE" : "INACTIVE",
         description: data.description,
         store: {
-          connect: { storeid: data.storeid },
+          connect: { storeid: store.storeid },
         },
-
         category: {
-          connect: data.category.map((category) => ({
-            categoryId: category,
+          connect: category.map((categoryname) => ({
+            categoryName: categoryname,
           })),
         },
       },
@@ -100,10 +104,34 @@ const addCoupons = async (req, res) => {
     res.sendStatus(200);
   } catch (error) {
     console.error("Error creating coupon:", error);
-    await prisma.$transaction.rollback();
+    res.status(500).json({ error: "Internal Server Error" });
   }
+};
+
+const getCategoriesFromStore = async (req, res) => {
+  console.log(req.params);
+  const { storeName } = req.params;
+  console.log(storeName);
+  try {
+    const store = await prisma.store.findUnique({
+      where: { storeName: storeName },
+      include: { categories: true },
+    });
+
+    console.log(store.categories);
+    const categories = store.categories.map((category) => {
+      return category.categoryName;
+    });
+    res.status(200).json({ categories });
+  } catch (error) {
+    console.log("Error fetching categories:", error);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+
+  console.log("here");
 };
 module.exports = {
   addCoupons,
   getAllCoupon,
+  getCategoriesFromStore,
 };

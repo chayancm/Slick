@@ -28,7 +28,8 @@ model category {
   metaSchema           String
   metaDescription      String
   store                store[]
-  coupon               coupon[]
+
+  coupon coupon[]
 
   @@index([categoryName])
 }
@@ -105,7 +106,7 @@ model coupon {
   AggregatorType     String
   type               String
   publisher          user         @relation(fields: [publisherId], references: [id])
-  publisherName      String
+  publisherName      String       @unique
   publisherId        String
   cashbackType       String
   minOff             Int

@@ -1,46 +1,43 @@
 /* eslint-disable no-unused-vars */
 import React,{useState} from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import {  useNavigate } from 'react-router-dom';
-import { width } from '@fortawesome/free-solid-svg-icons/fa0';
+
 const CategoryForm = () => {
   const navigate=useNavigate()
 
-  const [categoryName, setCategoryName] = useState('');
-  const [categoryUrl, setCategoryUrl] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [metaTitle, setMetaTitle] = useState('');
-  const [metaKeyword, setMetaKeyword] = useState('');
-  const [metaCanonical, setMetaCanonical] = useState('');
-  const [metaSchema, setMetaSchema] = useState('');
-  const [metaDescription, setMetaDescription] = useState('');
-  const [displayOnHome, setDisplayOnHome] = useState('');
-  const [displayOnHomecoupons, setDisplayOnHomeCoupons] = useState('');
-  const [displayOnFooter, setDisplayOnFooter] = useState('');
-  const [status, setStatus] = useState('');
+  const [values, setValues] = useState({
+    categoryName : '',
+    categoryUrl  : '',
+    imageUrl:'',
+    metaTitle:'',
+    metaKeyword:'',
+    metaCanonical:'',
+    metaSchema:'',
+    metaDescription:'',
+    displayOnHome:"INACTIVE",
+    displayOnHomeCoupons:"INACTIVE",
+    displayOnFooter:"INACTIVE",
+    status:"INACTIVE",
+  })
 
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } ,reset} = useForm();
+  const { reset} = useForm();
 
-  const onSubmit = async () => {
-    const data = {
-      categoryName: categoryName,
-      categoryUrl: categoryUrl,
-      imageUrl: imageUrl,
-      metaTitle: metaTitle,
-      metaKeyword: metaKeyword,
-      metaCanonical: metaCanonical,
-      metaSchema: metaSchema,
-      metaDescription: metaDescription,
-      displayOnHome: displayOnHome,
-      displayOnHomecoupons: displayOnHomecoupons,
-      displayOnFooter: displayOnFooter,
-      status: status 
-  };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData=new FormData();
+    Object.keys(values).forEach((key)=>{
+      if(Array.isArray(values[key])){
+          values[key].forEach((item) => formData.append(key, item));
+      }
+      else {
+          formData.append(key, values[key]);
+      }
+    })
+    const data =values;
     axios.defaults.withCredentials = true;
     try {
       setLoading(true);
@@ -50,39 +47,37 @@ const CategoryForm = () => {
         maxBodyLength: Infinity,
         url: 'http://localhost:3600/AdminPanel/manageCategory',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           
         },
-        data: JSON.stringify(data)
+        data: formData
       };
       const response = await axios.request(config);
-      if (!response.ok) {
+      if (response.status!=200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const result = await response.json();
-      console.log(result);
+      console.log(response);
       setOk(true);
-      setCategoryName('');
-          setCategoryUrl('');
-          setImageUrl('');
-          setMetaTitle('');
-          setMetaKeyword('');
-          setMetaCanonical('');
-          setMetaSchema('');
-          setMetaDescription('');
-          setDisplayOnHome('');
-          setDisplayOnHomeCoupons('');
-          setDisplayOnFooter('');
-          setStatus(''); 
+      setValues(
+        {...values,
+          categoryName : '',
+          categoryUrl  : '',
+          imageUrl:'',
+          metaTitle:'',
+          metaKeyword:'',
+          metaCanonical:'',
+          metaSchema:'',
+          metaDescription:'',
+          displayOnHome:"INACTIVE",
+          displayOnHomeCoupons:"INACTIVE",
+          displayOnFooter:"INACTIVE",
+          status:"INACTIVE",
+        }
+      )
       navigate('/DashBoard/Categories')
-      console.log(result);
   }catch (error) {
     console.error('Error fetching data:', error);
   } finally {
-    if(ok===true)
-    {
-      reset();
-    }
     setLoading(false);
    
   }
@@ -94,14 +89,14 @@ const CategoryForm = () => {
       <form onSubmit={onSubmit} >
     <fieldset className='' style={{width:'100%'}}>
       <legend className='text-3xl mt-4 mb-4'>Add Category</legend>
-  
+    <div className="grid grid-cols-3 gap-4">
       <section className="form-group mb-3 mr-5">
         <label className="block mb-1" htmlFor="categoryName">Category Name:</label>
         <input type="text" 
         id="categoryName" 
         name="categoryName" 
-        value={categoryName}
-        onChange={(e)=>setCategoryName(e.target.value)}
+        value={values.categoryName}
+        onChange={(e)=>setValues({ ...values, categoryName : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
@@ -109,26 +104,28 @@ const CategoryForm = () => {
       <section className="form-group mb-3">
         <label htmlFor="categoryUrl">Category URL:</label>
         <input type="text" id="categoryUrl" name="categoryUrl" 
-        value={categoryUrl}
-        onChange={(e)=>setCategoryUrl(e.target.value)}
+        value={values.categoryUrl}
+        onChange={(e)=>setValues({ ...values, categoryUrl : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
   
-      <section className="form-group mb-3">
-        <label htmlFor="imageUrl">Image URL:</label>
-        <input type="text" id="imageUrl" name="imageUrl" 
-        value={imageUrl}
-        onChange={(e)=>setImageUrl(e.target.value)}
-        className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
-        required/>
-      </section>
-  
+      <div>
+        <label className="block mb-2">Image</label>
+        <input 
+          type="file" 
+          className="w-full p-2 border rounded" 
+          onChange={(e) => setValues({...values,imageUrl:e.target.files[0]})} // Handle file selection
+        />
+      </div>
+      </div>
+      <hr className=" border-2 my-6"/>
+      <div className="grid grid-cols-3 gap-4">
       <section className="form-group mb-3">
         <label htmlFor="metaTitle">Meta Title:</label>
         <input type="text" id="metaTitle" name="metaTitle" 
-        value={metaTitle}
-        onChange={(e)=>setMetaTitle(e.target.value)}
+        value={values.metaTitle}
+        onChange={(e)=>setValues({ ...values,metaTitle : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
@@ -136,8 +133,8 @@ const CategoryForm = () => {
       <section className="form-group mb-3">
         <label htmlFor="metaKeyword">Meta Keyword:</label>
         <input type="text" id="metaKeyword" name="metaKeyword" 
-        value={metaKeyword}
-        onChange={(e)=>setMetaKeyword(e.target.value)}
+        value={values.metaKeyword}
+        onChange={(e)=>setValues({ ...values, metaKeyword : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
@@ -145,8 +142,8 @@ const CategoryForm = () => {
       <section className="form-group mb-3">
         <label htmlFor="metaCanonical">Meta Canonical:</label>
         <input type="text" id="metaCanonical" name="metaCanonical" 
-        value={metaCanonical}
-        onChange={(e)=>setMetaCanonical(e.target.value)}
+        value={values.metaCanonical}
+        onChange={(e)=>setValues({ ...values, metaCanonical : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
@@ -154,8 +151,8 @@ const CategoryForm = () => {
       <section className="form-group mb-3">
         <label htmlFor="metaSchema">Meta Schema:</label>
         <input type="text" id="metaSchema" name="metaSchema" 
-        value={metaSchema}
-        onChange={(e)=>setMetaSchema(e.target.value)}
+        value={values.metaSchema}
+        onChange={(e)=>setValues({ ...values, metaSchema : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required/>
       </section>
@@ -163,75 +160,75 @@ const CategoryForm = () => {
       <section className="form-group mb-3">
         <label htmlFor="metaDescription">Meta Description:</label>
         <textarea id="metaDescription" name="metaDescription" 
-        value={metaDescription}
-        onChange={(e)=>setMetaDescription(e.target.value)}
+        value={values.metaDescription}
+        onChange={(e)=>setValues({ ...values, metaDescription : e.target.value })}
         className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-300 w-full"
         required></textarea>
       </section>
-  
-      <section className="form-group mb-3">
-        <label  className="block mb-1" htmlFor="displayOnHome">Display On Home :</label>
-        <section className="flex items-center gap-2">
-          <input type="radio" id="displayOnHomeActive" name="displayOnHome" value="ACTIVE" 
-          onChange={(e)=>setDisplayOnHome(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnHomeActive">Active</label>
-          <input type="radio" id="displayOnHomeInactive" name="displayOnHome" value="INACTIVE" 
-          onChange={(e)=> setDisplayOnHome(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnHomeInactive">Inactive</label>
-        </section>
-  
-  
-  
-        <label htmlFor="displayOnHomeCoupons">Display On Home Coupons:</label>
-        <section className="flex items-center gap-2">
-          <input type="radio" id="displayOnHomeCouponActive" name="displayOnHomeCoupons" value="ACTIVE" 
-          onChange={(e)=>setDisplayOnHomeCoupons(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnHomeCouponsActive">Active</label>
-          <input type="radio" id="displayOnHomeCouponInactive" name="displayOnHomeCoupons" value="INACTIVE" 
-          onChange={(e)=>setDisplayOnHomeCoupons(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnHomeCouponsInactive">Inactive</label>
-        </section>
+  </div>
+  <hr className=" border-2 my-6"/>
+  <div className="grid grid-cols-3 gap-4">
+      
+        <div>
+          <label className=" mt-4 mb-2">DisplayOnHome (Active/Inactive)</label>
+              <input 
+                  type="checkbox" 
+                  className="w-5 h-5 mt-4 mb-2  ml-4"
+                  checked={values.displayOnHome==="ACTIVE"?true:false} 
+                  onChange={(e) =>{ 
+                      if(e.target.checked)setValues({ ...values, displayOnHome :"ACTIVE"  })
+                      else setValues({ ...values, displayOnHome :"INACTIVE"  })
+                      }} 
+                  /> 
+                        </div>
   
   
   
-        <label htmlFor="displayFooter">Display On Footer:</label>
-        <section className="flex items-center gap-2">
-          <input type="radio" id="displayFooterActive" name="displayOnFooter" value="ACTIVE" 
-          onChange={(e)=>setDisplayOnFooter(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnFooterActive">Active</label>
-          <input type="radio" id="displayOnFooterInactive" name="displayOnFooter" value="INACTIVE" 
-          onChange={(e)=>setDisplayOnFooter(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="displayOnFooterInactive">Inactive</label>
-        </section>
+        <div>
+                    <label className=" mt-4 mb-2">DisplayOnHomeCoupon (Active/Inactive)</label>
+                    <input 
+                        type="checkbox" 
+                        className="w-5 h-5 mt-4 mb-2  ml-4"
+                        checked={values.displayOnHomeCoupons==="ACTIVE"?true:false} 
+                        onChange={(e) =>{ 
+                            if(e.target.checked)setValues({ ...values, displayOnHomeCoupons :"ACTIVE"  })
+                            else setValues({ ...values, displayOnHomeCoupons :"INACTIVE"  })
+                            }} 
+                        /> 
+                        </div>
   
   
-        <label htmlFor="status">Status:</label>
-        <section className="flex items-center gap-2">
-          <input type="radio" id="statusActive" name="status" value="ACTIVE" 
-          onChange={(e)=>setStatus(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="statusActive">Active</label>
-          <input type="radio" id="statusInactive" name="status" value="INACTIVE" 
-          onChange={(e)=>setStatus(e.target.value)}
-          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-          required/>
-          <label htmlFor="statusInactive">Inactive</label>
-        </section>
-      </section>
   
+        <div>
+                    <label className=" mt-4 mb-2">DispalyOnFooter (Active/Inactive)</label>
+                    <input 
+                        type="checkbox" 
+                        className="w-5 h-5 mt-4 mb-2  ml-4"
+                        checked={values.displayOnFooter==="ACTIVE"?true:false} 
+                        onChange={(e) =>{ 
+                            if(e.target.checked)setValues({ ...values, displayOnFooter :"ACTIVE"  })
+                            else setValues({ ...values, displayOnFooter :"INACTIVE"  })
+                            }} 
+                        /> 
+                        </div>
+  
+  
+        <div>
+                    <label className=" mt-4 mb-2">Status (Active/Inactive)</label>
+                    <input 
+                        type="checkbox" 
+                        className="w-5 h-5 mt-4 mb-2  ml-4"
+                        checked={values.status==="ACTIVE"?true:false} 
+                        onChange={(e) =>{ 
+                            if(e.target.checked)setValues({ ...values, status :"ACTIVE"  })
+                            else setValues({ ...values, status :"INACTIVE"  })
+                            }} 
+                        /> 
+                        </div>
+          
+        
+        </div>
+        <hr className=" border-2 my-6"/>
       <button type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded-md mb-8 grow-0">Submit</button>
     </fieldset>
    </form>

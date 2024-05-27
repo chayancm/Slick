@@ -28,12 +28,13 @@ useEffect(() => {
         maxBodyLength: Infinity,
         url: 'http://localhost:3600/AdminPanel/manageCategory',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           
         },
       };
 
       const response = await axios.request(config);
+      console.log(response);
       console.log(response.data.categories);
       setData(response.data.categories);
     } catch (error) {

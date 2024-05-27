@@ -50,43 +50,7 @@ function App() {
     <main className={currentMode === 'Dark' ? 'dark' : 'light'}  style={{ minHeight: '100%',minWidth:'100%' }}>
        
       <Routes>
-        <Route path="/Login" element={<Login/>}/>
-        <Route path="/LogOut" element={<LogOut/>}/>
-        <Route path="/Register" element={<Register/>}/>
-        <Route path="/AddStore" element={<Add_Store/>}/>
-        <Route path="/AddCoupon" element={<Add_Coupon/>}/>
-
-        <Route path="/*" element={
-          <div className="app-container ">
-                <Tooltip title="Settings" placement="top">
-                <button
-                type="button"
-                onClick={() => setThemeSettings(true)}
-                style={{ background: currentColor, borderRadius: '50%' }}
-                className="settings-button"
-              >
-                <FiSettings />
-              </button>
-                </Tooltip>
-            
-               <div className={
-                    activeMenu 
-                      ? 'dark:bg-main-dark-bg bg-main-bg min-h-screen w-full'  
-                      : 'dark:bg-main-dark-bg bg-main-bg w-full min-h-screen max-w-full'
-                }> 
-                    <div >  
-                        <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar  w- max-w-full  ">
-                            <NavBar />
-                        </div>
-                    </div>
-                    {activeMenu && (
-                        <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white top-20 left-0 z-10 " style={{height:'80vh'}}>
-                            <SideBar />
-                        </div>
-                    )}
-                </div>
-        </div>}/>
-
+        <Route path="/" element={<Login/>}/>
         <Route path="/DashBoard/*" element={<DashBoard className="w-full"/>} />
       </Routes>
       

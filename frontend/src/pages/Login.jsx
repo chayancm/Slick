@@ -4,12 +4,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
  import axios from 'axios';
  import { useStateContext } from '../contexts/ContextProvider';
-import Cookies from 'js-cookie';
 const Login = () => {
      const { setAuth } = useAuth();
      const navigate = useNavigate();
      const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "/DashBoard";
     const userRef = useRef();
     const {isLoading,setIsLoading,setIsLogedIn}=useStateContext(); 
     const errRef = useRef();
@@ -49,7 +48,7 @@ const loginUser = async () => {
     const role = response?.data?.role;
     console.log(role);
     setAuth({ email, role});
-    const ttl = 30 * 60 * 1000;
+    const ttl = 24 * 60 * 60 * 1000;
       const now = new Date();
       const item = {
         value: true,

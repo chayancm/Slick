@@ -5,7 +5,12 @@ const prisma = new PrismaClient();
 const getAllCategory = async (req, res) => {
   try {
     const categories = await prisma.category.findMany();
-    res.status(200).json({ categories, count: categories.length });
+
+    const category = categories.map((category) => {
+      return category.categoryName;
+    });
+    console.log(category);
+    res.status(200).json({ categories, category });
   } catch (error) {
     console.log("Error fetching categories:", error);
     res.status(500).json({ error: "Failed to fetch categories" });
@@ -41,13 +46,13 @@ const getCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   console.log(req.body);
   const data = req.body;
-
+  const imageUrl = req.file ? req.file.path : "photo";
   try {
     const Category = await prisma.category.create({
       data: {
         categoryName: data.categoryName,
         categoryUrl: data.categoryUrl,
-        imageUrl: data.imageUrl,
+        imageUrl: imageUrl,
         status:
           data.status === "ACTIVE"
             ? activestatus.ACTIVE
@@ -71,8 +76,10 @@ const addCategory = async (req, res) => {
         metaDescription: data.metaDescription,
       },
     });
+    console.log("success");
     return res.status(200).json({ Category });
   } catch (error) {
+    console.log(error);
     if (
       error.code === "P2002" &&
       error.meta?.target?.includes("categoryName")

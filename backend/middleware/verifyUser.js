@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 const verifyUser = async (req, res, next) => {
   try {
     const token = req.cookies.jwt;
-    console.log(token);
     jwt.verify(
       token,
       process.env.REFRESH_TOKEN_SECRET,
@@ -45,7 +44,6 @@ const verifyUser = async (req, res, next) => {
         // Token is valid, proceed to next middleware
         req.id = user.id;
         req.roles = role;
-        console.log(req.id);
         next();
       }
     );

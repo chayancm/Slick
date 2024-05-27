@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { verifyEditor } = require("../middleware/verifyEditor");
+const { verifyUser } = require("../middleware/verifyUser");
 const {
   addCategory,
   updateCategory,
@@ -8,11 +9,11 @@ const {
   getCategory,
   deleteCategory,
 } = require("../controllers/manageCategoryController");
-
+const upload = require("../middleware/multer");
 router
   .route("/")
-  .get(verifyEditor, getAllCategory)
-  .post(verifyEditor, addCategory);
+  .get(verifyUser, getAllCategory)
+  .post([verifyEditor, upload.single("imageUrl")], addCategory);
 router
   .route("/:id")
   .get(verifyEditor, getCategory)

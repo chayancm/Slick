@@ -49,7 +49,7 @@ const Navbar = () => {
             <NavLink to={'/Login'} key={Login} className="navbar-link">
               Login
             </NavLink>
-            <NavLink to={'/Register'} key={Register} className="navbar-link">
+            <NavLink to={'DashBoard/Register'} key={Register} className="navbar-link">
               Register
             </NavLink>
           </>
@@ -57,16 +57,16 @@ const Navbar = () => {
 
         {isLogedin && (
           <>
-          <NavLink to={'/AddCoupon'} key={Add_Coupon} className="navbar-link">
+          <NavLink to={'DashBoard/AddCoupon'} key={Add_Coupon} className="navbar-link">
               Add Coupon
             </NavLink>
-          <NavLink to={'/AddStore'} key={Add_Store} className="navbar-link">
+          <NavLink to={'DashBoard/AddStore'} key={Add_Store} className="navbar-link">
               Add Store
             </NavLink>
           <NavLink to={'/DashBoard'} key={DashBoard} className="navbar-link">
             DashBoard
           </NavLink>
-          <NavLink to={'/LogOut'} key={LogOut} className="navbar-link">
+          <NavLink to={'DashBoard/LogOut'} key={LogOut} className="navbar-link">
            Logout
           </NavLink>
           </>
