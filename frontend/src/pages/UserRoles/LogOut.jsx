@@ -1,8 +1,8 @@
 import  {  useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import { useStateContext } from '../contexts/ContextProvider';
+import useAuth from '../../hooks/useAuth';
+import { useStateContext } from '../../contexts/ContextProvider';
 
 const LogOut = () => {
     const {  setIsLogedIn } = useStateContext(); 

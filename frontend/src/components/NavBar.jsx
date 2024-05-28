@@ -57,10 +57,10 @@ const Navbar = () => {
 
         {isLogedin && (
           <>
-          <NavLink to={'DashBoard/AddCoupon'} key={Add_Coupon} className="navbar-link">
+          <NavLink to={'AddCoupon'} key={Add_Coupon} className="navbar-link">
               Add Coupon
             </NavLink>
-          <NavLink to={'DashBoard/AddStore'} key={Add_Store} className="navbar-link">
+          <NavLink to={'AddStore'} key={Add_Store} className="navbar-link">
               Add Store
             </NavLink>
           <NavLink to={'/DashBoard'} key={DashBoard} className="navbar-link">

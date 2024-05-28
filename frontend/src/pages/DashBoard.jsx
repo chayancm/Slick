@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route ,Outlet} from 'react-router-dom';
 import { NavBar, Footer, SideBar, ThemeSettings, Header } from '../components/';
 import { Tooltip } from 'antd';
-import { Categories, Add_Admin, Edit_Admin, Add_Category, Edit_Category, ColorPicker, Ecommerce, Login,LogOut,Register,Add_Store,Add_Coupon } from './';
+import { Categories, Add_Admin, Edit_Admin, Add_Category, Edit_Category, ColorPicker, Ecommerce, Login,LogOut,Register,Add_Store,Add_Coupon,Coupons,Stores } from './';
 import { useStateContext } from '../contexts/ContextProvider';
 import axios from 'axios';
 import { FiSettings } from 'react-icons/fi';
@@ -53,7 +53,7 @@ const DashBoardLayout=()=>{
                             <NavBar />
                         </div>
 
-                        <div className={activeMenu ? 'ml-64 flex flex-row justify-center items-center max-w-full ' : ' flex flex-row justify-center items-center max-w-full '}>
+                        <div className={activeMenu ? 'ml-64 flex flex-row justify-center items-center max-w-full ' : ' flex flex-row justify-center items-center max-w-full relative'}>
                             <Outlet  />
                         </div>
                     </div>
@@ -86,14 +86,17 @@ const DashBoard = () => {
           <Route element={<RequireAuth allowedRoles={["ADMIN","EDITOR"]}/>}>
           <Route path="Add_category" element={<Add_Category />} />
           <Route path="Edit_category" element={<Edit_Category />} />
+          
           <Route path="Categories" element={<Categories />} />
         
         </Route>
         <Route element={<RequireAuth allowedRoles={["ADMIN","EDITOR","USER"]}/>}>
         <Route path="/DashBoard/LogOut" element={<LogOut/>}/>
         <Route path="/DashBoard/Register" element={<Register/>}/>
-        <Route path="/DashBoard/AddStore" element={<Add_Store/>}/>
-        <Route path="/DashBoard/AddCoupon" element={<Add_Coupon/>}/>
+        <Route path="AddStore" element={<Add_Store/>}/>
+        <Route path="AddCoupon" element={<Add_Coupon/>}/>
+        <Route path="Coupons" element={<Coupons/>}/>
+        <Route path="Stores" element={<Stores/>}/>
         </Route>
       </Route>
     </Routes>

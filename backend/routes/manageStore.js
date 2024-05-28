@@ -8,6 +8,7 @@ const {
   deleteStore,
   getNameOfStore,
   getAllCategory,
+  merchantIdCheck,
 } = require("../controllers/manageStoreController");
 const { verifyMerchant } = require("../middleware/verifyMerchant");
 const { authorizeStore } = require("../middleware/authorizeStore");
@@ -24,5 +25,5 @@ router
   .get(verifyMerchant, getStore)
   .patch([verifyMerchant, authorizeStore], updateStore)
   .delete([verifyMerchant, authorizeStore], deleteStore);
-
+router.route("/check-merchant-id/:merchantId").post(merchantIdCheck);
 module.exports = router;

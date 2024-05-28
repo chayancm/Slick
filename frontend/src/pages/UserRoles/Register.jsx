@@ -4,12 +4,12 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 // eslint-disable-next-line no-unused-vars
-import {Login} from './'
+import {Login} from '..'
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 import { useNavigate } from 'react-router-dom';
-import '../style/Register.css'
+import '../../style/Register.css'
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();

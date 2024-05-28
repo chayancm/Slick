@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
-
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import CategorySearch from "./CategorySearch";
+//import CategorySearch from "../Category/CategorySearch";
 
 const initialState = {
   storeName: '',
@@ -33,10 +31,12 @@ const StoreForm = () => {
   const [values, setValues] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [merchantIdError, setMerchantIdError] = useState('');
 
   const resetFormFields = () => {
     setValues(initialState);
     setErrors({});
+    setMerchantIdError('');
   };
 
   const validateFields = () => {
@@ -58,6 +58,31 @@ const StoreForm = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const checkMerchantId = async (merchantId) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/store/check-merchant-id/${merchantId}`);
+      if (response.status === 200) {
+        setMerchantIdError('');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        setMerchantIdError('Merchant ID already exists');
+      } else {
+        setMerchantIdError('Error checking Merchant ID');
+      }
+    }
+  };
+
+  const handleMerchantIdChange = (e) => {
+    const merchantId = e.target.value;
+    setValues({ ...values, merchantId });
+    if (merchantId.length >= 4) {
+      checkMerchantId(merchantId);
+    } else {
+      setMerchantIdError('');
+    }
   };
 
   const onSubmit = async (e) => {
@@ -84,7 +109,7 @@ const StoreForm = () => {
       const config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://localhost:3600/store', // Update with your endpoint
+        url: `${import.meta.env.VITE_API_URL}/store`, // Update with your endpoint
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -123,7 +148,7 @@ const StoreForm = () => {
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'http://localhost:3600/store/categories',
+          url: `${import.meta.env.VITE_API_URL}/store/categories`,
         };
         const response = await axios.request(config);
         console.log(response.data);
@@ -167,9 +192,10 @@ const StoreForm = () => {
                   type="text"
                   className="w-full p-2 border rounded"
                   value={values.merchantId}
-                  onChange={(e) => setValues({ ...values, merchantId: e.target.value })}
+                  onChange={handleMerchantIdChange}
                 />
                 {errors.merchantId && <p className="text-red-500">{errors.merchantId}</p>}
+                {merchantIdError && <p className="text-red-500">{merchantIdError}</p>}
               </div>
               <div>
                 <label className="block mb-2">Store Alternate Name</label>
@@ -228,15 +254,6 @@ const StoreForm = () => {
                   onChange={(e) => setValues({ ...values, storeDescription: e.target.value })}
                 ></textarea>
                 {errors.storeDescription && <p className="text-red-500">{errors.storeDescription}</p>}
-              </div>
-              <div>
-                <label className="block mb-2">UTM Parameter</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded"
-                  value={values.utmParameter}
-                  onChange={(e) => setValues({ ...values, utmParameter: e.target.value })}
-                />
               </div>
             </div>
             <hr className="border-2 my-6" />

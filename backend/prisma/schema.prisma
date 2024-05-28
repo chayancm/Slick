@@ -74,10 +74,12 @@ model token {
 }
 
 model store {
-  storeid              String       @id @default(uuid())
-  storeName            String       @unique
-  merchant             user         @relation(fields: [merchantId], references: [id], onDelete: Cascade)
-  merchantId           String
+  storeid   String @id @default(uuid())
+  storeName String @unique
+
+  createdBy            user         @relation(fields: [createdById], references: [id])
+  createdById          String
+  merchantId           Int          @unique
   storeAlternateName   String
   storeUrl             String
   storeLogo            String
@@ -106,14 +108,13 @@ model coupon {
   AggregatorType     String
   type               String
   publisher          user         @relation(fields: [publisherId], references: [id])
-  publisherName      String       @unique
+  publisherName      String
   publisherId        String
   cashbackType       String
   minOff             Int
   startDate          DateTime
   expirationTime     DateTime
   couponCode         String
-  imageUrl           String
   MerchantLink       String
   affiliateUrl       String
   termsAndConditions String
@@ -124,6 +125,6 @@ model coupon {
   showWithCategory   activestatus
   description        String
   category           category[]
-  store              store        @relation(fields: [storeid], references: [storeid])
-  storeid            String
+  store              store        @relation(fields: [storeid], references: [merchantId])
+  storeid            Int
 }

@@ -3,18 +3,17 @@ const { PrismaClient, activestatus } = require("@prisma/client");
 const { ok } = require("assert");
 const { addCategory } = require("./manageCategoryController");
 const prisma = new PrismaClient();
+const { v4: uuidv4 } = require("uuid");
 const getAllStore = async (req, res) => {
   try {
     let stores;
     if (req.role.includes("ADMIN") || req.role.includes("EDITOR")) {
-      // Fetch all stores
       stores = await prisma.store.findMany({
         include: {
           categories: true,
         },
       });
     } else {
-      // Fetch stores only for the current user
       stores = await prisma.store.findMany({
         where: { merchantId: req.user.id },
         include: {
@@ -52,13 +51,41 @@ const getStore = async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 };
+const merchantIdCheck = async (req, res) => {
+  const found = await prisma.store.findUnique({
+    where: {
+      merchantId: parseInt(req.params.merchantId, 10),
+    },
+  });
+  if (found === null) {
+    return res.status(200).send("available");
+  } else {
+    return res.status(403).send("allready exist");
+  }
+};
 
 const addStore = async (req, res) => {
   console.log(req.body);
   const data = req.body;
   const storeLogo = req.file ? req.file.path : "photo";
   const categoriesArray = data.checkedItems.map((category) => category.trim());
-
+  if (data.merchantId === "") {
+    const uuid = uuidv4();
+    let isUnique = false;
+    while (!isUnique) {
+      const numericPart = uuid.replace(/-/g, "").slice(0, 12);
+      const decimalId = parseInt(numericPart, 16) % 1000000;
+      const foundId = await prisma.store.findUnique({
+        where: {
+          merchantId: decimalId,
+        },
+      });
+      if (foundId == null) {
+        isUnique = true;
+        data.merchantId = decimalId;
+      }
+    }
+  }
   const foundCategories = await prisma.category.findMany({
     where: {
       categoryName: { in: categoriesArray },
@@ -102,7 +129,8 @@ const addStore = async (req, res) => {
         metaCanonical: data.metaCanonical,
         metaSchema: data.metaSchema,
         metaDescription: data.metaDescription,
-        merchant: { connect: { id: req.merchant } },
+        merchantId: parseInt(data.merchantId, 10),
+        createdBy: { connect: { id: req.createdById } },
         categories: {
           connect: foundCategories.map((category) => ({
             categoryId: category.categoryId,
@@ -115,9 +143,7 @@ const addStore = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.code === "P2002" && error.meta?.target?.includes("storeName")) {
-      return res
-        .status(400)
-        .json({ error: "Store with this name already exists." });
+      return res.status(400).send("Store with this name already exists.");
     } else {
       console.error("Error adding store:", error);
     }
@@ -285,4 +311,5 @@ module.exports = {
   addCategorytoStore,
   getNameOfStore,
   getAllCategory,
+  merchantIdCheck,
 };

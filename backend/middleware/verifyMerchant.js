@@ -14,6 +14,7 @@ const verifyMerchant = async (req, res, next) => {
           if (err.name === "TokenExpiredError") {
             return res.sendStatus(401);
           }
+          console.log("error");
           return res.sendStatus(403);
         }
         req.user = decoded.username;
@@ -42,7 +43,7 @@ const verifyMerchant = async (req, res, next) => {
         }
 
         // Token is valid, proceed to next middleware
-        req.merchant = user.id;
+        req.createdById = user.id;
         req.role = role;
         next();
       }

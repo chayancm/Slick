@@ -12,7 +12,6 @@ const Add_Coupon = () => {
     startDate: new Date().toISOString().split('T')[0], 
     expiryDate: new Date().toISOString().split('T')[0], 
     couponCode: '',
-    imageUrl: null,
     merchantLink: '',
     affiliateUrl: '',
     description:'',
@@ -43,21 +42,24 @@ const Add_Coupon = () => {
     const fetchData = async () => {
       try {
         axios.defaults.withCredentials = true;
-        const response = await axios.get('http://localhost:3600/AdminPanel/manageCategory/');
-        setValues((prevValues) => ({ ...prevValues, category: response.data.category }));
+        console.log(`${import.meta.env.VITE_API_URL}/coupon/categories/${values.store}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/coupon/categories/${values.store}`);
+        console.log(response);
+        setValues((prevValues) => ({ ...prevValues, category: response.data.categories
+        }));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [values.store]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         axios.defaults.withCredentials = true;
-        const response = await axios.get('http://localhost:3600/store/name');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/store/name`);
         setValues((prevValues) => ({ ...prevValues, stores: response.data.map((store) => store.storeName) }));
       } catch (error) {
         console.log(error);
@@ -104,25 +106,26 @@ const Add_Coupon = () => {
     const resetFormFields = () => {
       setValues({
         type: '',
-        AggregatorType: '',
-        publisherName: '',
-        cashbackType: '',
-        minOff: '',
-        startDate: new Date().toISOString().split('T')[0], 
-        expiryDate: new Date().toISOString().split('T')[0], 
-        couponCode: '',
-        description:'',
-        imageUrl: null,
-        merchantLink: '',
-        affiliateUrl: '',
-        termsAndConditions: '',
-        couponPunchline: '',
-        status: 'ACTIVE',
-        topOffer: 'INACTIVE',
-        hotOfTheDay: 'INACTIVE',
-        showWithCategory: 'INACTIVE',
-        store: '',
-        checkedItems: [],
+    AggregatorType: '',
+    publisherName: '',
+    cashbackType: '',
+    minOff: '',
+    startDate: new Date().toISOString().split('T')[0], 
+    expiryDate: new Date().toISOString().split('T')[0], 
+    couponCode: '',
+    merchantLink: '',
+    affiliateUrl: '',
+    description:'',
+    termsAndConditions: '',
+    couponPunchline: '',
+    status: 'ACTIVE',
+    topOffer: 'INACTIVE',
+    hotOfTheDay: 'INACTIVE',
+    showWithCategory: 'INACTIVE',
+    category: [],
+    stores: [],
+    store: '',
+    checkedItems: [],
       });
     };
 
@@ -138,7 +141,7 @@ const Add_Coupon = () => {
         formData.append(key, values[key]);
       }
     });
-
+    console.log(formData);
     try {
       setLoading(true);
       axios.defaults.withCredentials = true;
@@ -147,7 +150,7 @@ const Add_Coupon = () => {
         maxBodyLength: Infinity,
         url: 'http://localhost:3600/coupon',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
         data: formData,
       };
@@ -156,10 +159,11 @@ const Add_Coupon = () => {
       if (response.status !== 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const result = await response.data;
+      //const result = await response.data;
       resetFormFields();
     } catch (error) {
       console.error('Error creating store:', error);
+      alert(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -271,17 +275,6 @@ const Add_Coupon = () => {
                 onChange={(e) => setValues({ ...values, expiryDate: e.target.value })}
               />
             </div>
-
-            <div>
-              <label className="block mt-4 mb-2">Coupon Image (ONLY JPG FILE SUPPORTED)</label>
-              <input
-                type="file"
-                className="w-full p-2 border rounded"
-                accept="image/jpeg"
-                onChange={(e) => setValues({ ...values, imageUrl: e.target.files[0] })}
-              />
-            </div>
-
             <div>
               <label className="block mt-4 mb-2">Merchant Link</label>
               <input

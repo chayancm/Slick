@@ -45,7 +45,7 @@ const CategoryForm = () => {
       const config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://localhost:3600/AdminPanel/manageCategory',
+        url: `${import.meta.env.VITE_API_URL}/AdminPanel/manageCategory`,
         headers: {
           'Content-Type': 'multipart/form-data',
           
@@ -58,25 +58,26 @@ const CategoryForm = () => {
       }
       console.log(response);
       setOk(true);
-      setValues(
-        {...values,
-          categoryName : '',
-          categoryUrl  : '',
-          imageUrl:'',
-          metaTitle:'',
-          metaKeyword:'',
-          metaCanonical:'',
-          metaSchema:'',
-          metaDescription:'',
-          displayOnHome:"INACTIVE",
-          displayOnHomeCoupons:"INACTIVE",
-          displayOnFooter:"INACTIVE",
-          status:"INACTIVE",
-        }
-      )
-      navigate('/DashBoard/Categories')
+      // setValues(
+      //   {...values,
+      //     categoryName : '',
+      //     categoryUrl  : '',
+      //     imageUrl:'',
+      //     metaTitle:'',
+      //     metaKeyword:'',
+      //     metaCanonical:'',
+      //     metaSchema:'',
+      //     metaDescription:'',
+      //     displayOnHome:"INACTIVE",
+      //     displayOnHomeCoupons:"INACTIVE",
+      //     displayOnFooter:"INACTIVE",
+      //     status:"INACTIVE",
+      //   }
+      // )
+      // navigate('/DashBoard/Categories')
   }catch (error) {
     console.error('Error fetching data:', error);
+    alert(error.response.data.message);
   } finally {
     setLoading(false);
    

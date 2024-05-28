@@ -1,4 +1,7 @@
 /* eslint-disable no-undef */
+
+//import { route } from "fontawesome";
+
 /* eslint-disable react/jsx-no-undef */
 export const links = [
   {
@@ -21,6 +24,24 @@ export const links = [
         route: "Categories",
       },
     ],
+  },
+  {
+    title: "Coupons",
+    links: [
+    {
+      name:"Coupons",
+      route:"Coupons",
+    },
+  ]
+  },
+  {
+    title: "Store",
+    links: [
+    {
+      name:"Stores",
+      route:"Stores",
+    },
+  ]
   },
   {
     title: "Admin",

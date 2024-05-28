@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
  import axios from 'axios';
- import { useStateContext } from '../contexts/ContextProvider';
+ import { useStateContext } from '../../contexts/ContextProvider';
 const Login = () => {
      const { setAuth } = useAuth();
      const navigate = useNavigate();

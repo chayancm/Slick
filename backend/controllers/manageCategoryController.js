@@ -2,6 +2,7 @@ const { error } = require("console");
 const { PrismaClient, activestatus } = require("@prisma/client");
 const { ok } = require("assert");
 const prisma = new PrismaClient();
+const fs = require("fs");
 const getAllCategory = async (req, res) => {
   try {
     const categories = await prisma.category.findMany();
@@ -44,8 +45,9 @@ const getCategory = async (req, res) => {
 };
 
 const addCategory = async (req, res) => {
-  console.log(req.body);
   const data = req.body;
+  console.log(data.displayOnHomeCoupons);
+  console.log(data.displayOnFooter);
   const imageUrl = req.file ? req.file.path : "photo";
   try {
     const Category = await prisma.category.create({
@@ -62,7 +64,7 @@ const addCategory = async (req, res) => {
             ? activestatus.ACTIVE
             : activestatus.INACTIVE,
         displayOnHomecoupons:
-          data.displayOnHomecoupons === "ACTIVE"
+          data.displayOnHomeCoupons === "ACTIVE"
             ? activestatus.ACTIVE
             : activestatus.INACTIVE,
         displayOnFooter:
@@ -79,16 +81,13 @@ const addCategory = async (req, res) => {
     console.log("success");
     return res.status(200).json({ Category });
   } catch (error) {
-    console.log(error);
     if (
       error.code === "P2002" &&
       error.meta?.target?.includes("categoryName")
     ) {
-      return res
-        .status(400)
-        .json({ error: "Category with this name already exists." });
+      return res.status(400).send({ message: "Category with same name exist" });
     } else {
-      console.error("Error adding category:", error);
+      console.log("Error adding category:", error);
     }
   }
 };
@@ -98,6 +97,7 @@ const updateCategory = async (req, res) => {
   console.log(id);
   const data = req.body;
   console.log(data);
+  const imageUrl = req.file ? req.file.path : "photo";
 
   try {
     const existingCategory = await prisma.category.findUnique({
@@ -119,7 +119,7 @@ const updateCategory = async (req, res) => {
       data: {
         categoryName: data.categoryName,
         categoryUrl: data.categoryUrl,
-        imageUrl: data.imageUrl,
+        imageUrl: imageUrl,
         status:
           data.status === "ACTIVE"
             ? activestatus.ACTIVE
@@ -129,7 +129,7 @@ const updateCategory = async (req, res) => {
             ? activestatus.ACTIVE
             : activestatus.INACTIVE,
         displayOnHomecoupons:
-          data.displayOnHomecoupons === "ACTIVE"
+          data.displayOnHomeCoupons === "ACTIVE"
             ? activestatus.ACTIVE
             : activestatus.INACTIVE,
         displayOnFooter:
@@ -143,7 +143,6 @@ const updateCategory = async (req, res) => {
         metaDescription: data.metaDescription,
       },
     });
-
     if (!updatedCategory) {
       return res.status(404).json({ message: "Failed to update category" });
     }
@@ -156,10 +155,22 @@ const updateCategory = async (req, res) => {
     return res.status(500).json({ error: "Failed to update category" });
   }
 };
-
 const deleteCategory = async (req, res) => {
-  const { id } = req.params; // Extract categoryName from req.params
-
+  const { id } = req.params;
+  const cat = await prisma.category.findUnique({
+    where: {
+      categoryId: id,
+    },
+  });
+  cat.imageUrl;
+  const filePath = cat.imageUrl;
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error("Error deleting the file:", err);
+      return;
+    }
+    console.log("File deleted successfully");
+  });
   try {
     const deletedCategory = await prisma.category.delete({
       where: {

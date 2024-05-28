@@ -46,14 +46,13 @@ const getCoupon = async (req, res) => {
 const addCoupons = async (req, res) => {
   const data = req.body;
   const userId = req.id;
-
   try {
     const store = await prisma.store.findUnique({
       where: {
         storeName: data.store,
       },
       select: {
-        storeid: true,
+        merchantId: true,
       },
     });
 
@@ -75,7 +74,6 @@ const addCoupons = async (req, res) => {
         cashbackType: data.cashbackType,
         AggregatorType: data.AggregatorType,
         minOff: parseInt(data.minOff, 10),
-        imageUrl: imageUrl,
         startDate: new Date(data.startDate),
         expirationTime: new Date(data.expiryDate),
         couponCode: data.couponCode,
@@ -90,7 +88,7 @@ const addCoupons = async (req, res) => {
           data.showWithCategory === "ACTIVE" ? "ACTIVE" : "INACTIVE",
         description: data.description,
         store: {
-          connect: { storeid: store.storeid },
+          connect: { merchantId: store.merchantId },
         },
         category: {
           connect: category.map((categoryname) => ({
@@ -109,6 +107,7 @@ const addCoupons = async (req, res) => {
 };
 
 const getCategoriesFromStore = async (req, res) => {
+  console.log("here i am");
   console.log(req.params);
   const { storeName } = req.params;
   console.log(storeName);

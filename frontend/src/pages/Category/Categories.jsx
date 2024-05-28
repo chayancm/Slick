@@ -3,12 +3,12 @@ import React from 'react'
 import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table } from 'antd';
-import { Header } from '../components';
+import { Header } from '../../components';
 import Cookies from 'js-cookie';
-import {  CategoryGrid,gridCategoryImage,gridCategoryStatus } from '../dummy';
-import { useStateContext } from '../contexts/ContextProvider';
+import {  CategoryGrid,gridCategoryImage,gridCategoryStatus } from '../../dummy';
+import { useStateContext } from '../../contexts/ContextProvider';
 import { useNavigate } from 'react-router-dom';
-import {Edit_Category} from './'
+import {Edit_Category} from '..'
 
 const Categories =() => {
   let navigate = useNavigate();
@@ -55,7 +55,7 @@ try {
   const config = {
     method: 'delete',
     maxBodyLength: Infinity,
-    url: `http://localhost:3600/AdminPanel/manageCategory/${id}`,
+    url: `${import.meta.env.VITE_API_URL}/AdminPanel/manageCategory/${id}`,
     headers: {
       'Content-Type': 'application/json',
       
