@@ -66,7 +66,9 @@ const StoreTable = () => {
 
   useEffect(() => {
     const fetchStores = async () => {
+
       try {
+        axios.defaults.withCredentials = true;
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/store`); // Replace with your API endpoint
         console.log(response.data);
         setStores(response.data);
@@ -108,9 +110,9 @@ const StoreTable = () => {
     }
   };
 
-  const handleEdit = (record) => {
-    console.log(record.storeid);
-    navigate('/DashBoard/Edit_category', { state: { data: record } });
+  const handleEdit = (store) => {
+    console.log(store.storeid);
+    navigate(`/DashBoard/Edit_Store/storeid=${store.storeid}`, { state: { data: store } });
   };
 
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -132,7 +134,6 @@ const StoreTable = () => {
       <Table>
         <thead>
           <tr>
-            <Th>Store ID</Th>
             <Th>Store Name</Th>
             <Th>Merchant ID</Th>
             <Th>Alternate Name</Th>
@@ -159,7 +160,6 @@ const StoreTable = () => {
         <tbody>
           {currentRecords.map((store) => (
             <Tr key={store.storeid}>
-              <Td>{store.storeid}</Td>
               <Td>{store.storeName}</Td>
               <Td>{store.merchantId}</Td>
               <Td>{store.storeAlternateName}</Td>

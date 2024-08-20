@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 const fs = require("fs");
 const getAllCategory = async (req, res) => {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        categoryId: "desc",
+      },
+    });
 
     const category = categories.map((category) => {
       return category.categoryName;

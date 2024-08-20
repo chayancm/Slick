@@ -74,9 +74,8 @@ model token {
 }
 
 model store {
-  storeid   String @id @default(uuid())
-  storeName String @unique
-
+  storeid              String       @id @default(uuid())
+  storeName            String       @unique
   createdBy            user         @relation(fields: [createdById], references: [id])
   createdById          String
   merchantId           Int          @unique

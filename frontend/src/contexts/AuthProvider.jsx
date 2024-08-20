@@ -9,8 +9,8 @@ export const AuthProvider = ({ children }) => {
 
     if (storedAuth) {
       const storedAuthData = JSON.parse(storedAuth);
-      console.log( storedAuthData.value.email);  // Output: "chayan@check.com"
-       console.log( storedAuthData.value.role); 
+      console.log( storedAuthData?.value?.email);  // Output: "chayan@check.com"
+       console.log( storedAuthData?.value?.role); 
       if (storedAuthData.expiry && new Date().getTime() > storedAuthData.expiry) {
       localStorage.removeItem('auth');
       return {};

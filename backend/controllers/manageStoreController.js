@@ -14,6 +14,7 @@ const getAllStore = async (req, res) => {
         },
       });
     } else {
+      
       stores = await prisma.store.findMany({
         where: { merchantId: req.user.id },
         include: {
@@ -31,7 +32,7 @@ const getAllStore = async (req, res) => {
 const getStore = async (req, res) => {
   const { id } = req.params;
   if (!id) {
-    return res.status(400).send("Bad Request: categoryName header is missing");
+    return res.status(400).send("Bad Request: store id in header is missing");
   }
 
   try {
@@ -39,15 +40,21 @@ const getStore = async (req, res) => {
       where: {
         storeid: id,
       },
+      include: {
+        categories: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
     });
-
     if (!store) {
       return res.status(404).json({ message: "No store found with this name" });
     }
 
-    return res.status(200).json({ category });
+    return res.status(200).json({ store });
   } catch (error) {
-    console.error("Error fetching category:", error);
+    console.error("Error fetching Store:", error);
     return res.status(500).send("Internal Server Error");
   }
 };
@@ -92,7 +99,6 @@ const addStore = async (req, res) => {
     },
     select: { categoryId: true },
   });
-  console.log(foundCategories);
   try {
     await prisma.store.create({
       data: {
@@ -152,10 +158,7 @@ const addStore = async (req, res) => {
 
 const updateStore = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const data = req.body;
-  id = req.user.id;
-  console.log(data);
 
   try {
     const existingStore = await prisma.store.findUnique({
@@ -169,7 +172,15 @@ const updateStore = async (req, res) => {
         .status(404)
         .json({ message: `Category with name ${id} not found` });
     }
-
+    const categoriesArray = data.checkedItems.map((category) =>
+      category.trim()
+    );
+    const foundCategories = await prisma.category.findMany({
+      where: {
+        categoryName: { in: categoriesArray },
+      },
+      select: { categoryId: true },
+    });
     const updatedStore = await prisma.store.update({
       where: {
         storeid: id,
@@ -178,8 +189,7 @@ const updateStore = async (req, res) => {
         storeName: data.storeName,
         storeAlternateName: data.storeAlternateName,
         storeUrl: data.storeUrl,
-        storeLogo: data.storeLogo,
-        TrackingLink: data.TrackingLink,
+        TrackingLink: data.trackingLink,
         storeDomainName: data.storeDomainName,
         utmParameter: data.utmParameter,
         status:
@@ -209,8 +219,8 @@ const updateStore = async (req, res) => {
         metaSchema: data.metaSchema,
         metaDescription: data.metaDescription,
         categories: {
-          connect: data.categories.map((categoryId) => ({
-            storeid: categoryId,
+          connect: foundCategories.map((category) => ({
+            categoryId: category.categoryId,
           })),
         },
       },
@@ -220,9 +230,7 @@ const updateStore = async (req, res) => {
       return res.status(404).json({ message: "Failed to update Store" });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Store updated successfully", updatedStore });
+    return res.status(200).json({ message: "Store updated successfully" });
   } catch (error) {
     console.error("Error updating Store:", error);
     return res.status(500).json({ error: "Failed to update Store" });
@@ -275,7 +283,6 @@ const addCategorytoStore = async (req, res) => {
 };
 const getNameOfStore = async (req, res) => {
   let stores;
-  console.log("here");
   try {
     stores = await prisma.store.findMany({
       select: {
@@ -295,7 +302,6 @@ const getAllCategory = async (req, res) => {
         categoryName: true,
       },
     });
-    console.log(categories);
     res.status(200).json(categories);
   } catch (error) {
     console.log("Error fetching categories:", error);

@@ -2,22 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+const initalState={
+  categoryName: '',
+  categoryUrl: '',
+  imageUrl: '',
+  metaTitle: '',
+  metaKeyword: '',
+  metaCanonical: '',
+  metaSchema: '',
+  metaDescription: '',
+  displayOnHome: '',
+  displayOnHomeCoupons: '',
+  displayOnFooter: '',
+  status: ''
+}
 const CategoryForm = () => {
-  const [values, setValues] = useState({
-    categoryName: '',
-    categoryUrl: '',
-    imageUrl: '',
-    metaTitle: '',
-    metaKeyword: '',
-    metaCanonical: '',
-    metaSchema: '',
-    metaDescription: '',
-    displayOnHome: '',
-    displayOnHomeCoupons: '',
-    displayOnFooter: '',
-    status: ''
-  });
+  const [values, setValues] = useState(initalState);
 
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,18 +38,8 @@ const CategoryForm = () => {
         };
         const response = await axios.request(config);
         setValues({
-          categoryName: response.data.category.categoryName || '',
-          categoryUrl: response.data.category.categoryUrl || '',
-          imageUrl: response.data.category.imageUrl || '',
-          metaTitle: response.data.category.metaTitle || '',
-          metaKeyword: response.data.category.metaKeyword || '',
-          metaCanonical: response.data.category.metaCanonical || '',
-          metaSchema: response.data.category.metaSchema || '',
-          metaDescription: response.data.category.metaDescription || '',
-          displayOnHome: response.data.category.displayOnHome || '',
-          displayOnHomeCoupons: response.data.category.displayOnHomeCoupons || '',
-          displayOnFooter: response.data.category.displayOnFooter || '',
-          status: response.data.category.status || ''
+          ...initalState,
+          ...response.data.category
         });
       } catch (error) {
         console.log(error);
@@ -92,22 +82,7 @@ const CategoryForm = () => {
       }
       console.log(response);
       setOk(true);
-      setValues(
-        {...values,
-          categoryName : '',
-          categoryUrl  : '',
-          imageUrl:'',
-          metaTitle:'',
-          metaKeyword:'',
-          metaCanonical:'',
-          metaSchema:'',
-          metaDescription:'',
-          displayOnHome:"INACTIVE",
-          displayOnHomeCoupons:"INACTIVE",
-          displayOnFooter:"INACTIVE",
-          status:"INACTIVE",
-        }
-      )
+      setValues(initalState)
       navigate('/DashBoard/Categories')
   }catch (error) {
     console.error('Error fetching data:', error);

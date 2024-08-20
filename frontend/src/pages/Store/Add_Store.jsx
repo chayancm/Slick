@@ -29,6 +29,7 @@ const initialState = {
 
 const StoreForm = () => {
   const [values, setValues] = useState(initialState);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [merchantIdError, setMerchantIdError] = useState('');
@@ -109,7 +110,7 @@ const StoreForm = () => {
       const config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${import.meta.env.VITE_API_URL}/store`, // Update with your endpoint
+        url: `${import.meta.env.VITE_API_URL}/store`, 
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -123,7 +124,7 @@ const StoreForm = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.data;
+      //const result = await response.data;
       resetFormFields();
     } catch (error) {
       console.error('Error creating store:', error);

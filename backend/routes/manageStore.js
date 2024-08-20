@@ -23,7 +23,7 @@ router.route("/name").get(getNameOfStore);
 router
   .route("/:id")
   .get(verifyMerchant, getStore)
-  .patch([verifyMerchant, authorizeStore], updateStore)
+  .patch(verifyMerchant, updateStore)
   .delete([verifyMerchant, authorizeStore], deleteStore);
 router.route("/check-merchant-id/:merchantId").post(merchantIdCheck);
 module.exports = router;

@@ -58,23 +58,23 @@ const CategoryForm = () => {
       }
       console.log(response);
       setOk(true);
-      // setValues(
-      //   {...values,
-      //     categoryName : '',
-      //     categoryUrl  : '',
-      //     imageUrl:'',
-      //     metaTitle:'',
-      //     metaKeyword:'',
-      //     metaCanonical:'',
-      //     metaSchema:'',
-      //     metaDescription:'',
-      //     displayOnHome:"INACTIVE",
-      //     displayOnHomeCoupons:"INACTIVE",
-      //     displayOnFooter:"INACTIVE",
-      //     status:"INACTIVE",
-      //   }
-      // )
-      // navigate('/DashBoard/Categories')
+      setValues(
+        {...values,
+          categoryName : '',
+          categoryUrl  : '',
+          imageUrl:'',
+          metaTitle:'',
+          metaKeyword:'',
+          metaCanonical:'',
+          metaSchema:'',
+          metaDescription:'',
+          displayOnHome:"INACTIVE",
+          displayOnHomeCoupons:"INACTIVE",
+          displayOnFooter:"INACTIVE",
+          status:"INACTIVE",
+        }
+      )
+      navigate('/DashBoard/Categories')
   }catch (error) {
     console.error('Error fetching data:', error);
     alert(error.response.data.message);
